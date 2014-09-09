@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package webserver;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -23,99 +22,65 @@ import java.net.InetSocketAddress;
 public class WebServer {
 
     static int port = 8080; //not the final port
-    static String ip =  "127.0.0.1"; // not the final IP
-    
+    static String ip = "127.0.0.1"; // not the final IP
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        
-        InetSocketAddress i = new InetSocketAddress(ip, port); //localhost - 127.0.0.1
-        HttpServer server = HttpServer.create(i,0);
-        server.createContext("/startpage", new PagesHandler());  
-        server.createContext("/online" , new OnlineHandler());
-        server.createContext("/logfile" , new LogFileHandler());
 
+        InetSocketAddress i = new InetSocketAddress(ip, port); //localhost - 127.0.0.1
+        HttpServer server = HttpServer.create(i, 0);
+
+        server.createContext("/startpage", new genericHandler("index.html")); //Eksempel på genericHandler brugt.
+        server.createContext("/online", new genericHandler("online.html"));
+        server.createContext("/logfile", new genericHandler("logfile.html"));
+        server.createContext("/members", new genericHandler("groupmembers.html"));
         server.setExecutor(null);
         server.start();
-        
+
     }
     
-    static class PagesHandler implements HttpHandler {
+    // Dette er en filehandler som kan bruges på alle filer.
+    //Foerhen var der en handler for hver fil, men dette er der ikke brug for.
+    // Vi kan nu blot kalde genericHandler, med en String fileName
+    //Vi sparer tid, og kode.
 
-            String content = "public/";
+    static class genericHandler implements HttpHandler {
 
-            @Override
-            public void handle(HttpExchange he) throws IOException {
+        
+        //Constructor der goer det muligt at bruge filename som input.
+        
+        public genericHandler(String fileName) 
+        {
+            this.fileName = fileName;
+        }
+        
+        
 
-                File file = new File(content + "index.html");
+        String content = "public/";
+        String fileName;
 
-                byte[] bytesToSend = new byte[(int) file.length()];
-                try {
-                    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-                    bis.read(bytesToSend, 0, bytesToSend.length);
-                } catch (IOException ie) {
-                    ie.printStackTrace();
-                }
-                he.sendResponseHeaders(200, bytesToSend.length);
-                try (OutputStream os = he.getResponseBody()) {
-                    os.write(bytesToSend, 0, bytesToSend.length);
-                }
+        @Override
+        public void handle(HttpExchange he) throws IOException {
 
+            File file = new File(content + fileName);
+      
+            byte[] bytesToSend = new byte[(int) file.length()];
+            try {
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                bis.read(bytesToSend, 0, bytesToSend.length);
+            } catch (IOException ie) {
+                ie.printStackTrace();
+            }
+            he.sendResponseHeaders(200, bytesToSend.length);
+            try (OutputStream os = he.getResponseBody()) {
+                os.write(bytesToSend, 0, bytesToSend.length);
             }
 
         }
-    
-    
 
-    static class OnlineHandler implements HttpHandler {
+    }
 
-            String content = "public/";
-
-            @Override
-            public void handle(HttpExchange he) throws IOException {
-
-                File file = new File(content + "html2.html");
-
-                byte[] bytesToSend = new byte[(int) file.length()];
-                try {
-                    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-                    bis.read(bytesToSend, 0, bytesToSend.length);
-                } catch (IOException ie) {
-                    ie.printStackTrace();
-                }
-                he.sendResponseHeaders(200, bytesToSend.length);
-                try (OutputStream os = he.getResponseBody()) {
-                    os.write(bytesToSend, 0, bytesToSend.length);
-                }
-
-            }
-
-        }
-    
-    static class LogFileHandler implements HttpHandler {
-
-            String content = "public/";
-
-            @Override
-            public void handle(HttpExchange he) throws IOException {
-
-                File file = new File(content + "html2.html");
-
-                byte[] bytesToSend = new byte[(int) file.length()];
-                try {
-                    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-                    bis.read(bytesToSend, 0, bytesToSend.length);
-                } catch (IOException ie) {
-                    ie.printStackTrace();
-                }
-                he.sendResponseHeaders(200, bytesToSend.length);
-                try (OutputStream os = he.getResponseBody()) {
-                    os.write(bytesToSend, 0, bytesToSend.length);
-                }
-
-            }
-
-        }
     
 }
