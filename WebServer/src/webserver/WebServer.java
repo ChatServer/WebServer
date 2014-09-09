@@ -12,11 +12,17 @@ package webserver;
  */
 public class WebServer {
 
+    static int port = 8080; //not the final port
+    static String ip =  "127.0.0.1"; // not the final IP
+    
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        
+       
     }
     
 }
