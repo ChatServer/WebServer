@@ -22,7 +22,7 @@ import java.net.InetSocketAddress;
 public class WebServer {
 
     static int port = 8080; //not the final port
-    static String ip = "127.0.0.1"; // not the final IP
+    static String ip = "100.85.90.92"; // not the final IP
 
     /**
      * @param args the command line arguments
@@ -36,15 +36,17 @@ public class WebServer {
         server.createContext("/online", new genericHandler("online.html"));
         server.createContext("/logfile", new genericHandler("logfile.html"));
         server.createContext("/members", new genericHandler("groupmembers.html"));
+        server.createContext("/documentation", new genericHandler("documentation.txt"));
+        server.createContext("/jarfile", new genericHandler("Ca1Jar.txt"));
         server.setExecutor(null);
         server.start();
 
     }
     
     // Dette er en filehandler som kan bruges på alle filer.
-    //Foerhen var der en handler for hver fil, men dette er der ikke brug for.
+    // Foerhen var der en handler for hver fil, men dette er der ikke brug for.
     // Vi kan nu blot kalde genericHandler, med en String fileName
-    //Vi sparer tid, og kode.
+    // Vi sparer tid, og kode.
 
     static class genericHandler implements HttpHandler {
 
